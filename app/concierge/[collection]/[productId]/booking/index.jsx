@@ -12,17 +12,18 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import { Ionicons } from "@expo/vector-icons";
 import { fetchSingleProduct } from "../../../../../hooks/shopify";
 import WhatsappButton from "../../../../../components/WhatsappButton";
 import { StatusBar } from "expo-status-bar";
+import HeaderMain from "../../../../../components/HeaderMain";
 
 export default function Product() {
-  const navigation = useNavigation();
-  const { location, collection, productId } = useLocalSearchParams();
+  const { title, collection, productId, selectedLocation } =
+    useLocalSearchParams();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function Product() {
   ); // Added dependency array for useCallback
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <ActivityIndicator size="large" color="#000" />;
   }
 
   return (
@@ -82,46 +83,28 @@ export default function Product() {
       style={styles.container}
     >
       <SafeAreaView style={styles.container}>
-        <StatusBar style="auto" />
-
-        <View
-          className={"flex flex-row justify-between items-center bg-black h-16"}
+        <StatusBar style="dark" />
+        <HeaderMain
+          href={{
+            pathname: "/concierge/[collection]/[productId]",
+            params: {
+              collection: collection,
+              productId: productId,
+              title: title,
+              selectedLocation: selectedLocation,
+            },
+          }}
         >
-          <Pressable
-            onPress={() => navigation.goBack()}
+          <Text
             style={{
-              padding: 16,
-              height: 64,
-              width: 64,
-              alignItems: "center",
-              justifyContent: "center",
+              color: "white",
+              fontSize: 24,
+              fontFamily: "24SevenType",
             }}
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </Pressable>
-
-          <View
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              alignItems: "center",
-              paddingVertical: 8,
-              zIndex: -1,
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                fontSize: 24,
-                fontFamily: "24SevenType",
-                paddingVertical: 8,
-              }}
-            >
-              Booking
-            </Text>
-          </View>
-        </View>
+            BOOKING
+          </Text>
+        </HeaderMain>
         <ScrollView>
           <Text
             style={{

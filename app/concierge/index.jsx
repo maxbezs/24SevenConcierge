@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { SplashScreen, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
 import Banner from "../../components/Banner";
-import CollectionItem from "../../components/CollectionItem";
+import CollectionItem from "../../components/items/CollectionItem";
 import Header from "../../components/Header";
 import { StatusBar } from "expo-status-bar";
 import WhatsappButton from "../../components/WhatsappButton";
 import { fetchAllCollections } from "../../hooks/shopify";
 import { useFonts } from "expo-font";
-
-SplashScreen.preventAutoHideAsync();
+import SkeletonLoader from "../../components/items/SkeletonLoader"; // Import the SkeletonLoader
 
 const Concierge = () => {
   // Load the custom font
@@ -21,6 +20,7 @@ const Concierge = () => {
   // State for collections
   const [allCollections, setAllCollections] = useState([]);
   const [filteredCollections, setFilteredCollections] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   // Location data
   const data = [
@@ -31,7 +31,6 @@ const Concierge = () => {
   const { selectedLocation } = useLocalSearchParams();
 
   const [value, setValue] = useState(selectedLocation || data[0].value);
-  const [isFocus, setIsFocus] = useState(false);
 
   // Set selected location if provided
   useEffect(() => {
@@ -47,8 +46,10 @@ const Concierge = () => {
         const data = await fetchAllCollections();
         setAllCollections(data);
         filterCollectionsByLocation(data, value);
+        setLoading(false); // Set loading to false once data is fetched
       } catch (error) {
         console.error("Error fetching collections: ", error);
+        setLoading(false); // Ensure loading is set to false in case of error
       }
     };
     fetchData();
@@ -68,13 +69,6 @@ const Concierge = () => {
     setFilteredCollections(filtered);
   };
 
-  // Hide the splash screen once the font is loaded
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
   // Return null if the font hasn't loaded yet
   if (!fontsLoaded) {
     return null;
@@ -82,20 +76,24 @@ const Concierge = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <Header
-        data={data}
-        value={value}
-        setValue={setValue}
-        setIsFocus={setIsFocus}
-      />
+      <StatusBar style="dark" />
+      <Header data={data} value={value} setValue={setValue} />
       <ScrollView contentContainerStyle={styles.listContent}>
         <Banner />
-        {filteredCollections.map((item) => (
-          <View key={item.id}>
-            <CollectionItem collection={item} location={value} />
-          </View>
-        ))}
+        {/* Show skeleton loader while loading */}
+        {loading ? (
+          <>
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+          </>
+        ) : (
+          filteredCollections.map((item) => (
+            <View key={item.id}>
+              <CollectionItem collection={item} location={value} />
+            </View>
+          ))
+        )}
       </ScrollView>
       <WhatsappButton />
     </SafeAreaView>

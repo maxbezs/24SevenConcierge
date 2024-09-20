@@ -1,33 +1,21 @@
-import React, { useEffect, useState } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { SplashScreen, useLocalSearchParams } from "expo-router";
-
+import React, { useEffect, useMemo, useState } from "react";
+import { SafeAreaView, ScrollView, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import Banner from "../../components/Banner";
 import Header from "../../components/Header";
-import ProductItem from "../../components/ProductItem";
+import ProductItem from "../../components/items/ProductItem";
 import WhatsappButton from "../../components/WhatsappButton";
+import SkeletonLoader from "../../components/items/SkeletonLoader";
 import { fetchProductsFromRealEstateCollection } from "../../hooks/shopify";
 import { useFonts } from "expo-font";
 
-SplashScreen.preventAutoHideAsync();
-
 const RealEstate = () => {
-  // Load the custom font
   const [fontsLoaded] = useFonts({
     "24SevenType": require("../../assets/24Seven-type.ttf"),
   });
-
-  // State for Real Estate collection products
   const [realEstateProducts, setRealEstateProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [realEstateCollectionId, setRealEstateCollectionId] = useState();
+  const [loading, setLoading] = useState(true);
 
   // Location data
   const data = [
@@ -35,10 +23,10 @@ const RealEstate = () => {
     { label: "Marbella", value: "Marbella" },
     { label: "Tenerife", value: "Tenerife" },
   ];
-  const { selectedLocation } = useLocalSearchParams();
 
+  const { selectedLocation } = useLocalSearchParams();
   const [location, setLocation] = useState(selectedLocation || data[0].value);
-  const [isFocus, setIsFocus] = useState(false);
+
   // Set selected location if provided
   useEffect(() => {
     if (selectedLocation) {
@@ -50,70 +38,51 @@ const RealEstate = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { collectionId, products } =
-          await fetchProductsFromRealEstateCollection();
+        const products = await fetchProductsFromRealEstateCollection();
         setRealEstateProducts(products);
-        setRealEstateCollectionId(collectionId);
-        filterProductsByLocation(products, location); // Filter by location initially
       } catch (error) {
         console.error("Error fetching Real Estate products: ", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  // Filter Real Estate products based on location and tags
-  useEffect(() => {
-    if (realEstateProducts.length > 0) {
-      filterProductsByLocation(realEstateProducts, location);
-    }
-  }, [location]);
+  // Filtering function for products
+  const filterByLocation = (product, location) =>
+    product.tags.includes(location) && product.tags.includes("Real Estate");
 
-  const filterProductsByLocation = (products, location) => {
-    const filtered = products.filter(
-      (product) =>
-        product.tags.includes(location) && product.tags.includes("Real Estate")
+  // Memoized filtered products based on location
+  const filteredProducts = useMemo(() => {
+    return realEstateProducts.filter((product) =>
+      filterByLocation(product, location)
     );
-    setFilteredProducts(filtered);
-  };
-
-  // Hide the splash screen once the font is loaded
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  // Return null if the font hasn't loaded yet
-  if (!fontsLoaded) {
-    return null;
-  }
+  }, [realEstateProducts, location]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <Header
-        data={data}
-        value={location}
-        setValue={setLocation}
-        setIsFocus={setIsFocus}
-      />
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar style="dark" />
+      <Header data={data} value={location} setValue={setLocation} />
       <Banner />
-      <ScrollView
-        contentContainerStyle={{
-          backgroundColor: "white",
-          paddingVertical: 8,
-        }}
-      >
-        {filteredProducts.map((product) => (
-          <View key={product.id}>
-            <ProductItem
-              product={product}
-              pathname="/real-estate/[productId]"
-              params={{ selectedLocation: location }}
-            />
-          </View>
-        ))}
+      <ScrollView>
+        {loading || !fontsLoaded ? (
+          <>
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+          </>
+        ) : (
+          filteredProducts.map((product) => (
+            <View key={product.id}>
+              <ProductItem
+                product={product}
+                pathname="/real-estate/[productId]"
+                params={{ selectedLocation: location }}
+              />
+            </View>
+          ))
+        )}
       </ScrollView>
       <WhatsappButton />
     </SafeAreaView>
@@ -121,10 +90,3 @@ const RealEstate = () => {
 };
 
 export default RealEstate;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-});

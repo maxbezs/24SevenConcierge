@@ -182,13 +182,5 @@ export async function fetchProductsFromRealEstateCollection() {
 
   const collection = jsonResponse.data.collections.edges[0]?.node;
 
-  if (!collection) {
-    console.error("No collection titled 'Real Estate' found.");
-    return null;
-  }
-  const returnValue = {
-    collectionId: collection.id,
-    products: collection.products.edges.map((edge) => edge.node),
-  };
-  return returnValue;
+  return collection.products.edges.map((edge) => edge.node);
 }

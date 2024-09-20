@@ -1,8 +1,7 @@
-import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
-
+import WhatsappLogo from "./svg/WhatsappLogo";
 const WhatsappButton = () => {
   return (
     <Link
@@ -24,10 +23,7 @@ const WhatsappButton = () => {
       asChild
     >
       <Pressable>
-        <Image
-          source={require("../assets/whatsapp-white.png")}
-          style={{ width: 40, height: 40 }}
-        />
+        <WhatsappLogo />
       </Pressable>
     </Link>
   );
