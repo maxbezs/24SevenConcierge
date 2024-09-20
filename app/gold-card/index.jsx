@@ -12,7 +12,7 @@ export default function Card() {
         flex: 1,
       }}
     >
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <HeaderMain href="/homepage">
         <Text
           style={{

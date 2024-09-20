@@ -34,7 +34,7 @@ export default function Product() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <HeaderMain
         href={{ pathname: "/real-estate", params: { selectedLocation } }}
       />

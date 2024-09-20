@@ -62,7 +62,7 @@ const RealEstate = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <Header data={data} value={location} setValue={setLocation} />
       <Banner />
       <ScrollView>

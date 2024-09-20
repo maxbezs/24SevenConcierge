@@ -24,7 +24,7 @@ export default function HomePage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <View style={styles.innerContainer}>
         <View style={styles.logoContainer}>
           <Logo1 />

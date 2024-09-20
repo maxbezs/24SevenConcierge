@@ -37,7 +37,7 @@ export default function Collection() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <HeaderMain
         href={{
           pathname: "/concierge",

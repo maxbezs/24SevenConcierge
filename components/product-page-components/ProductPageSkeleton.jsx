@@ -7,7 +7,7 @@ import WhatsappButton from "../WhatsappButton";
 const ProductPageSkeleton = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <HeaderMain href={"/homepage"} />
       <ScrollView style={{ padding: 16 }}>
         <View style={styles.skeletonImage} />

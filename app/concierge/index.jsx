@@ -76,7 +76,7 @@ const Concierge = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <Header data={data} value={value} setValue={setValue} />
       <ScrollView contentContainerStyle={styles.listContent}>
         <Banner />

@@ -84,7 +84,7 @@ export default function Product() {
       style={styles.container}
     >
       <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
+        <StatusBar style="auto" />
         <HeaderMain
           href={{
             pathname: "/real-estate/[productId]/",
