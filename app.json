@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.sevenconcierge.sevenconcierge"
+      "package": "com.sevenconcierge.concierge24seven"
     },
     "plugins": [
       "expo-router",
